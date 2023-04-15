@@ -1,0 +1,37 @@
+library(httr)
+library(XML)
+library(rvest)
+
+######## do it right now ########################
+1. Go on https://www.imdb.com/chart/top/
+  2. Collect all 250 movies + rating + links to each movie page
+3. Visit the link, extract the name of the director
+4. Using the babyname package and some collective work, attribute a gender to the director
+5. Get the gross revenue from another website
+####################Solution#########################
+
+url <-  "https://www.imdb.com/chart/top/"
+html <- GET(url)
+html2 <- htmlParse(html)
+
+title <- xpathSApply(html2,"//td[@class= 'titleColumn']/a", xmlValue)
+title
+rate <- xpathSApply(html2, "//td[@class = 'ratingColumn imdbRating']/strong", xmlValue)
+rate
+#link <- xpathSApply(html2,"//td[@class= 'titleColumn']/a", xmlAttrs)[1,]
+# same effect as below
+link <- xpathSApply(html2,"//td[@class='titleColumn'] /a/@href")
+link
+#director <- xpathSApply(html2, "//a[@class='ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link']",xmlAttrs)
+
+direct <- list()
+for(i in 1:250){
+link_x <- paste0("https://www.imdb.com",link[i]) 
+res <- read_html(link_x)
+html_x <- htmlParse(res)
+director[[i]] <- xpathSApply(html2, "//a[@class='ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link']",xmlAttrs)
+Sys.sleep(1)
+}
+
+df <- as.data.frame(cbind(title,rate,director,link))
+View(df)
