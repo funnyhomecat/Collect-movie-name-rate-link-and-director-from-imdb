@@ -24,7 +24,7 @@ link <- xpathSApply(html2,"//td[@class='titleColumn'] /a/@href")
 link
 #director <- xpathSApply(html2, "//a[@class='ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link']",xmlAttrs)
 
-direct <- list()
+director <- list()
 for(i in 1:250){
 link_x <- paste0("https://www.imdb.com",link[i]) 
 res <- read_html(link_x)
